@@ -2,22 +2,23 @@
 
 ## Overview
 
-This Python script automates the process of collecting, filtering, summarizing, and emailing a daily AI/ML news digest. It gathers articles from multiple AI-related RSS feeds, filters only items published within the last 24 hours, removes duplicates, summarizes them using Google Gemini, and sends a formatted Hebrew-language digest to your email inbox.
+This Python script automates the process of collecting, filtering, summarizing, and emailing a daily AI/ML news digest.
+It gathers articles from multiple AI-related RSS feeds, filters items published within the last 24 hours, removes duplicates, summarizes them using Google Gemini, and sends a formatted Hebrew-language digest directly to your inbox.
 
 ##  Features
 - Fetches AI/ML news from curated RSS feeds (OpenAI, DeepMind, Hugging Face, arXiv, TechCrunch AI, The Verge AI, etc.).
 - Extracts only articles published in the last 24 hours.
-- Removes duplicate news items across feeds based on URL.
-- Sends aggregated article data to Google Gemini for summarization.
-- Produces a Hebrew, developer-focused digest: SOTA models, tools, new releases, frameworks, major updates.
-- Sends an HTML email with RTL support, custom styling, and daily timestamp.
-- Fully automated (intended to run daily via cron or scheduler).
+- Removes duplicate news items across feeds using URL-based deduplication.
+- Uses Google Gemini to generate a clean, structured Hebrew summary.
+- Developer-focused digest: SOTA models, tools, new releases, frameworks, major updates.
+- Sends an HTML email with RTL support, custom styling, and timestamp.
+- Fully automated — can be run locally, via cron, or through GitHub Actions.
 
 ## Requirements
 - Python 3.9+ (3.10 or 3.11 recommended)
-- Internet access for fetching RSS feeds and Gemini API calls
-- A valid Gemini API Key
-- An email account with SMTP access (Gmail example provided)
+- Internet access for RSS fetching + Gemini API calls
+- Valid Gemini API Key
+- Email account with SMTP access (Gmail recommended)
 
 ## Installation
 1. Clone the repository
@@ -61,22 +62,67 @@ python main.py
 If no news was found in the last 24 hours, it prints:
 No news found.
 
-## Scheduling (Optional)
-Linux (cron)
-0 8 * * * /usr/bin/python3 /path/to/main.py >> /path/to/log.txt 2>&1
-Windows (Task Scheduler)
+## Automation (Optional) — GitHub Actions
+You can fully automate the daily digest using GitHub Actions.
+1. Configure Secrets
+Inside your GitHub repository:
+- Go to: Settings → Secrets and variables → Actions
+- Click New repository secret
+- Add the following secrets:
 
-Create a daily task that runs:
-python C:\path\to\main.py
+GEMINI_API_KEY	Your Gemini API key
+EMAIL_SENDER	Email used to send messages
+EMAIL_PASSWORD	App password (recommended)
+EMAIL_RECEIVER	Recipient email
+
+2. Create the Workflow
+- Go to the Actions tab
+- Click set up a workflow yourself
+- Name the file: daily_run.yml
+- Paste the following:
+
+```
+name: Daily AI News Aggregator
+
+on:
+  schedule:
+    # Runs every day at 06:00 UTC (08:00–09:00 Israel time depending on DST)
+    - cron: '0 6 * * *'
+  workflow_dispatch: # Allows manual runs for testing
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+
+    - name: Run script
+      env:
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        EMAIL_SENDER: ${{ secrets.EMAIL_SENDER }}
+        EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+        EMAIL_RECEIVER: ${{ secrets.EMAIL_RECEIVER }}
+      run: python daily_ai_agent.py
+```
+
+- Click Commit changes
+
+Your digest will now be generated and emailed automatically every day.
 
 ## Troubleshooting
 - 403 errors on RSS feeds — Some sources block bots; custom User-Agent solves this.
 - Email not sending — Gmail often requires an app password if 2FA is enabled.
 - Gemini model errors — The script automatically retries multiple model versions.
-
-## Notes
-- The output digest is automatically formatted in Hebrew even though the script/README are English.
-- You can modify the prompt to change tone, target audience, or structure.
-- To support Markdown → HTML conversion beyond simple replacements, consider adding a Markdown parser.
 
 Enjoy :)
