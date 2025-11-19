@@ -1,0 +1,32 @@
+name: Daily AI News Aggregator
+
+on:
+  schedule:
+    # הרצה כל יום בשעה 06:00 UTC (שזה 08:00 או 09:00 שעון ישראל תלוי בשעון קיץ)
+    - cron: '0 6 * * *'
+  workflow_dispatch: # מאפשר לך להריץ ידנית בלחיצת כפתור לבדיקה
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+
+    - name: Run script
+      env:
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        EMAIL_SENDER: ${{ secrets.EMAIL_SENDER }}
+        EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+        EMAIL_RECEIVER: ${{ secrets.EMAIL_RECEIVER }}
+      run: python daily_ai_agent.py
