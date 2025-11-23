@@ -194,14 +194,20 @@ def summarize_news(news_text):
     2. **Strict "BIG NEWS" Filtering:**
        - **EXCLUDE:** General tech news, crypto, business/stock news, and purely theoretical research papers (unless it's a major breakthrough), Minor bug fixes, small version increments (v1.1 to v1.2), funding news, pure speculation/opinion pieces..
        - **INCLUDE:** GitHub repos, Hugging Face releases, new SOTA models that can be used/tested, Critical security vulnerabilities, major flaws in popular tools, or "breaking changes" and major updates to frameworks (PyTorch, TensorFlow, LangChain).
-    3. **Structure:** Unified list of updates.
+    3. **Structure: Two Sections Required.** The output MUST be divided into two main sections:
+        a. **פיתוח (Development):** Must include all news related to product releases, API updates, framework changes, and general tech news (Sources like TechCrunch, OpenAI, Meta, AWS, Hugging Face, LangChain).
+        b. **מחקר (Research):** Must include all news from scientific or research-focused sources. All entries from the **Source: cs.CL updates on arXiv.org** MUST be placed here.
     4. **Format per item:**
        - **Headline:** The name of the innovation.
        - **Date:** The date of publication (YYYY-MM-DD). Include the time of publication in Israel time (HH:MM:SS).
        - **Description:** 2-3 sentences explaining what is new and why it matters.
        - **Details:** License (Open Source/Commercial), Price (Is it free?), Where to try (Link).
        - **Source Link:** Original link.
-    5. **IMPORTANT:** - Do NOT include an opening sentence (like "Here is the summary"), Do NOT include a closing sentence, Start directly with the first news item. Include ALL relevant entries from the provided list. Do not summarize or combine entries unless they are truly about the exact same story.
+    5. **IMPORTANT:** - **Headings:** Use the following exact headings:
+            **## עדכוני פיתוח וכלים 🛠️** (For the Development section)
+            **## חדשות מחקר 🧪** (For the Research section)
+        - **Flow:** Do NOT include an opening sentence, Do NOT include a closing sentence. Start directly with the first heading (**## עדכוני פיתוח וכלים 🛠️**).
+        - **Inclusion:** Include ALL relevant entries from the provided list. Do not summarize or combine entries unless they are truly about the exact same story.
     6. **Tone:** Friendly, Professional, concise, engaging, easy to read.
     
     Here is the raw data (all unique entries):
